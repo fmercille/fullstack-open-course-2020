@@ -1,0 +1,14 @@
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over server:
+Server saves the content of the note
+and informs the browser
+end note
+
+server-->browser: HTTP 201 Created
+
+note over browser:
+Browser executes the event handler that
+displays the new status of the notes
+without having to fetch them all again
+end note
