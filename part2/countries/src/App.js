@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 import SearchForm from './components/SearchForm'
@@ -19,10 +19,6 @@ const App = () => {
 
   const handleSearchFormChange = (event) => {
     setSearchTerm(event.target.value)
-  }
-
-  const handleShowChange = (event) => {
-    console.log(event.target)
   }
 
   const filteredCountries = countries.filter(country => country.name.toLowerCase().includes(searchTerm.toLowerCase()))
