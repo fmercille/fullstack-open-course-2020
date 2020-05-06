@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 
 import Directory from './components/Directory'
 import Filter from './components/Filter'
 import NewEntryForm from './components/NewEntryForm'
+
+import entriesService from './services/entries'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -13,8 +14,8 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    entriesService
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
@@ -36,8 +37,7 @@ const App = () => {
 
     const newPersonObject = { name: newName, id: persons.length + 1, number: newNumber }
 
-    axios
-      .post('http://localhost:3001/persons', newPersonObject)
+    entriesService.create(newPersonObject)
       .then(response => {
         console.log(response)
         setPersons(persons.concat(newPersonObject))
