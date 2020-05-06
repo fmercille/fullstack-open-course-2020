@@ -35,7 +35,8 @@ const App = () => {
       return;
     }
 
-    const newPersonObject = { name: newName, id: persons.length + 1, number: newNumber }
+    const newId = newName + newNumber // Now that we can delete entries, we can't use the count as an ID
+    const newPersonObject = { name: newName, id: newId, number: newNumber }
 
     entriesService.create(newPersonObject)
       .then(response => {
@@ -44,6 +45,18 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+  }
+
+  const deletePerson = (id) => {
+    const name = persons.find(person => person.id === id).name
+
+    if (window.confirm(`Delete ${name}?`)) {
+      entriesService.delete(id)
+        .then(response => {
+          console.log(response)
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
   }
 
   const handleNewNameChange = (event) => {
@@ -67,7 +80,7 @@ const App = () => {
       <h2>Add a new entry</h2>
       <NewEntryForm addPersonHandler={addPerson} newNameValue={newName} newNameChangeHandler={handleNewNameChange} newNumberValue={newNumber} newNumberChangeHandler={handleNewNumberChange} />
       <h2>Numbers</h2>
-      <Directory content={filteredPersons} />
+      <Directory content={filteredPersons} deleteHandler={deletePerson} />
     </div>
   )
 }

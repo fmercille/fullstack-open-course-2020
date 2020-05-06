@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Directory = ({ content }) => (
+const Directory = ({ content, deleteHandler }) => (
   <div>
     {content.map(person =>
-      <div key={person.name}>{person.name} {person.number}</div>
+      <div key={person.name}>{person.name} {person.number}&nbsp;<button onClick={() => deleteHandler(person.id)}>Delete</button></div>
     )}
   </div>
 )
