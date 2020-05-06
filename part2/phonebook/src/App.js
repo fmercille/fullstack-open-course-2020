@@ -25,14 +25,24 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
-    if (persons.findIndex(e => e.name === newName) > -1) {
-      alert(`${newName}  is already in the phonebook`)
-      return;
-    }
-
+    // Validate phone number first
     if (newNumber.length < 3) {
       alert("You need to input a valid phone number")
       return;
+    }
+
+    if (persons.findIndex(e => e.name === newName) > -1) {
+      if (window.confirm(`${newName} is already in the phonebook. Replace the old number with the new one?`)) {
+        const changedPerson = { ...persons.find(e => e.name === newName), number: newNumber }
+        entriesService.update(changedPerson.id, changedPerson)
+          .then(returnedEntry => {
+            setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedEntry.data))
+            setNewName('')
+            setNewNumber('')
+          })
+      }
+
+      return
     }
 
     const newId = newName + newNumber // Now that we can delete entries, we can't use the count as an ID
