@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Directory from './components/Directory'
 import Filter from './components/Filter'
 import NewEntryForm from './components/NewEntryForm'
+import Notification from './components/Notification'
 
 import entriesService from './services/entries'
 
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -21,6 +23,14 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
+
+  const displayNotification = (message) => {
+    setNotificationMessage(message)
+
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -39,6 +49,7 @@ const App = () => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedEntry.data))
             setNewName('')
             setNewNumber('')
+            displayNotification(`Updated number for ${newName}`)
           })
       }
 
@@ -54,6 +65,7 @@ const App = () => {
         setPersons(persons.concat(newPersonObject))
         setNewName('')
         setNewNumber('')
+        displayNotification(`Added ${newName}`)
       })
   }
 
@@ -65,6 +77,7 @@ const App = () => {
         .then(response => {
           console.log(response)
           setPersons(persons.filter(person => person.id !== id))
+          displayNotification(`Deleted ${name}`)
         })
     }
   }
@@ -86,6 +99,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter value={filterValue} handler={handleFilterValueChange} />
       <h2>Add a new entry</h2>
       <NewEntryForm addPersonHandler={addPerson} newNameValue={newName} newNameChangeHandler={handleNewNameChange} newNumberValue={newNumber} newNumberChangeHandler={handleNewNumberChange} />
