@@ -13,13 +13,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    console.log('effect')
     entriesService
       .getAll()
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -29,6 +28,14 @@ const App = () => {
 
     setTimeout(() => {
       setNotificationMessage(null)
+    }, 5000)
+  }
+
+  const displayError = (message) => {
+    setErrorMessage(message)
+
+    setTimeout(() => {
+      setErrorMessage(null)
     }, 5000)
   }
 
@@ -51,6 +58,16 @@ const App = () => {
             setNewNumber('')
             displayNotification(`Updated number for ${newName}`)
           })
+          .catch(error => { // The person was deleted
+            displayError(`Error while updating the entry for ${newName}`)
+
+            // Fetch the data from the server to synchronize the view
+            entriesService
+              .getAll()
+              .then(response => {
+                setPersons(response.data)
+              })
+          })
       }
 
       return
@@ -61,7 +78,6 @@ const App = () => {
 
     entriesService.create(newPersonObject)
       .then(response => {
-        console.log(response)
         setPersons(persons.concat(newPersonObject))
         setNewName('')
         setNewNumber('')
@@ -75,9 +91,18 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       entriesService.delete(id)
         .then(response => {
-          console.log(response)
           setPersons(persons.filter(person => person.id !== id))
           displayNotification(`Deleted ${name}`)
+        })
+        .catch(error => { // The person was deleted
+          displayError(`Error while deleting the entry for ${name}`)
+
+          // Fetch the data from the server to synchronize the view
+          entriesService
+            .getAll()
+            .then(response => {
+              setPersons(response.data)
+            })
         })
     }
   }
@@ -99,7 +124,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} messageType='notice' />
+      <Notification message={errorMessage} messageType='error' />
       <Filter value={filterValue} handler={handleFilterValueChange} />
       <h2>Add a new entry</h2>
       <NewEntryForm addPersonHandler={addPerson} newNameValue={newName} newNameChangeHandler={handleNewNameChange} newNumberValue={newNumber} newNumberChangeHandler={handleNewNumberChange} />
