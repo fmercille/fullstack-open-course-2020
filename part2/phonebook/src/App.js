@@ -73,8 +73,7 @@ const App = () => {
       return
     }
 
-    const newId = newName + newNumber // Now that we can delete entries, we can't use the count as an ID
-    const newPersonObject = { name: newName, id: newId, number: newNumber }
+    const newPersonObject = { name: newName, number: newNumber }
 
     entriesService.create(newPersonObject)
       .then(response => {
