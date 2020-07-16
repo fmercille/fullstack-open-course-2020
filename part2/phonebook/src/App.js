@@ -82,6 +82,9 @@ const App = () => {
         setNewNumber('')
         displayNotification(`Added ${newName}`)
       })
+      .catch(error => {
+        displayError(error.response.data.error)
+      })
   }
 
   const deletePerson = (id) => {
